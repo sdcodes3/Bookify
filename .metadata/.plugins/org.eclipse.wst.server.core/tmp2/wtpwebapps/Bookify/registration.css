@@ -1,0 +1,47 @@
+@charset "UTF-8";
+html {
+    height: 100%;
+    width: 100%;
+}
+
+body {
+    height: 100%;
+    background-image: url("img/boook.avif");
+    background-size: cover;
+    background-repeat: no-repeat;
+    font-family: "Roboto", sans-serif;
+}
+.form {
+    background-color: rgba(0, 0, 0,0.5);
+    box-shadow: 12px 12px 2px 1px rgba(0, 0, 0, 0.3),-12px -12px 2px 1px rgba(0, 0, 0, 0.3),-12px 12px 2px 1px rgba(0, 0, 0, 0.3),12px -12px 2px 1px rgba(0, 0, 0, 0.3);
+}
+.form > *{
+    color: white;
+}
+
+.form > div > label{
+    font-family: "Cambria",sans-serif;
+    font-weight: bold;
+}
+
+.header{
+    font-family: "Cambria",sans-serif;
+}
+
+input{
+    border: none;
+    background: none;
+    outline: none;
+    color: white;
+    letter-spacing: 1px;
+    border-bottom: 1px solid white;
+}
+
+input[type="submit"]:hover{
+    border: 2px dashed white;
+    color: white;
+}
+
+::placeholder{
+    color: rgba(255, 255, 255, 0.726);
+}

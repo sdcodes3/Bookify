@@ -1,0 +1,211 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ page import="p1.Login" %>
+<%
+if(session.getAttribute("userId")==null){
+	response.sendRedirect("login.jsp?error=2");
+}
+else{
+	int id = Integer.parseInt(session.getAttribute("userId").toString()); 
+	if(id<=100){
+		response.sendRedirect("login.jsp?error=2");
+	}
+}
+%>
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="icon" type="image/x-icon" href="https://thenounproject.com/api/private/icons/5330258/edit/?backgroundShape=SQUARE&backgroundShapeColor=%23000000&backgroundShapeOpacity=0&exportSize=752&flipX=false&flipY=false&foregroundColor=%23000000&foregroundOpacity=1&imageFormat=png&rotation=0&token=gAAAAABjhQlQWzG1lz6UkmMBFQtFE8q0k7boQfBHU2oY30dckPRxKC6p4jCi7sKm5vVv8ZwfSJP0PgfodERUvZrTtU8TXrMhdw%3D%3D">
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bookify - Insert Insights</title>
+<link rel="stylesheet" href="home.css">
+<!--Bootstrap 5.2-->
+<!-- CSS only -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Font Awesome link -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+<style>
+html, body{
+	height: 100%;
+	width: 100%;
+}
+</style>
+</head>
+<body class="d-flex flex-column">
+	<nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container-fluid py-1 px-4">
+            <a class="navbar-brand" href="#">
+                Bookify
+                <!-- <img src="img/image-removebg-preview (1).png" class="img-fluid"> -->
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ms-auto gap-0 gap-lg-3">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="home.jsp">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="addInsight.jsp">Add Insight</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link disabled" aria-current="page" href="manageInsight.jsp">Manage your Insight</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="index.jsp?logout=true">
+                        <%
+                        new Login();
+                        int id = Integer.parseInt(session.getAttribute("userId").toString());
+                        ResultSet rst = Login.st.executeQuery("SELECT name FROM user WHERE id="+id);
+                        rst.next();
+                        String name = rst.getString("name"); 
+                        if(name.contains(" "))
+                        	name = name.substring(0, name.indexOf(' ')); 
+                        %>
+                        <b>Hello <% out.print(name); %></b>, Logout?
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+	<div class="container-fluid h-100 d-flex align-items-center">
+		<div class="col-12 col-md-8 col-lg-6 col-xl-4 p-0 d-flex flex-column justify-content-center">
+			<div class="ms-2">
+				<a href="home.jsp" class="text-decoration-none fw-bold"><i class="fa-solid fa-rotate-left me-1"></i>Go back</a>
+			</div>
+			<div class="text-center fw-bold h2">
+				Add and Publish your Insights about the book here..	
+			</div>
+			<form action="processInsight.jsp?addInsight=1" method="post" class="d-flex flex-column gap-3 bg-light p-3 rounded-2">
+				<%
+				if("true".equals(session.getAttribute("addBook"))){
+					session.removeAttribute("addBook");
+				%>
+				<div class="msg text-center fw-bold h5 text-success">
+					Book Added Successfully!!
+				</div>
+				<% } %>
+				<%
+				if("true".equals(session.getAttribute("addInsight"))){
+					session.removeAttribute("addInsight");
+				%>
+				<div class="msg text-center fw-bold h5 text-success">
+					Insight Published Successfully!!
+				</div>
+				<% }%>
+				<div class="d-flex flex-column gap-2">
+					<label>Book Name : </label>
+					<select name="book" class="form-select">
+						<%@page import="java.sql.*" %>
+						<%
+						new Login();
+						ResultSet rs = Login.st.executeQuery("SELECT * FROM book");
+						while(rs.next()){
+						%>							
+							<option value="<% out.print(rs.getInt("id")); %>"><% out.println(rs.getString("name")); %></option>
+						<%
+						}
+						%>
+					</select>
+			    </div>
+			    <div class="d-flex flex-column gap-2">
+			    	Insights / Comments
+			    	<textarea rows="3" cols="10" class="form-control" name="insight">Your Insight....</textarea>
+			    </div>
+			    <div class="d-flex justify-content-between">
+			    	<button type="button" class="btn text-primary border-0" data-bs-toggle="modal" data-bs-target="#addBook">
+						Book not found?
+					</button>
+		        	<input class="btn btn-primary" type="submit" value="Publish" name="publish">
+		        </div>
+		    </form>
+		    <div class="modal fade" id="addBook" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				<div class="modal-dialog modal-dialog-centered">
+			  		<div class="modal-content">
+				    	<div class="modal-header">
+				        	<h1 class="modal-title fs-5" id="exampleModalLabel">Add Book</h1>
+				        	<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				      	</div>
+			      		<form action="processInsight.jsp?addBook=1" method="POST" enctype="multipart/form-data">
+					      	<div class="modal-body d-flex flex-column gap-3">
+						      	<div class="d-flex flex-column gap-2">
+									<label>Book Name : </label>						
+						        	<input list="books" name="newBook" class="form-control">
+							        <datalist id="books">
+							            <%
+										ResultSet rs1 = Login.st.executeQuery("SELECT * FROM book");
+										while(rs1.next()){
+										%>							
+											<option value="<% out.print(rs1.getString("name")); %>"><% out.println(rs1.getString("name")); %></option>
+										<%
+										}
+										%>
+							        </datalist>
+							    </div>
+							    <div class="d-flex flex-column gap-2">
+									<label>Book Name : </label>
+									<select name="category" class="form-select">
+										<%
+										ResultSet rs5 = Login.st.executeQuery("SELECT * FROM category");
+										while(rs5.next()){
+										%>							
+											<option value="<% out.print(rs5.getInt("id")); %>"><% out.println(rs5.getString("name")); %></option>
+										<%
+										}
+										%>
+									</select>
+							    </div>
+			        		    <div class="row g-0 gap-3">
+							    	<div class="col">
+								    	<label>Author Name : </label>
+								        <input list="authorName" name="newAuthor" class="form-control">
+								        <datalist id="authorName">
+								            <%
+											ResultSet rs2 = Login.st.executeQuery("SELECT DISTINCT author FROM book");
+											while(rs2.next()){
+											%>							
+												<option value="<% out.print(rs2.getString("author")); %>"><% out.println(rs2.getString("author")); %></option>
+											<%
+											}
+											%>
+								        </datalist>
+							        </div>
+							        <div class="col-3">
+							        	<label>Ratings : </label>
+								       <input type="text" name="newRate" class="form-control">
+							        </div>
+							    </div>
+							    <div class="d-flex flex-column gap-2">
+							    	About Book
+							    	<textarea rows="3" cols="10" class="form-control" name="newAbout">About...</textarea>
+							    </div>
+							    <div class="d-flex flex-column gap-2">
+							    	<div>
+							    		Book's Image : 
+							    	</div>
+							    	<div class="input-group">
+										<input type="file" class="form-control" id="inputGroupFile02" name="img">
+									</div>
+								</div>
+					      	</div>
+					      	<div class="modal-footer">
+					        	<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+					        	<input type="submit" class="btn btn-primary" name="addBook" value="Add Book">
+					      	</div>
+						</form>
+				    </div>
+		  		</div>
+			</div>
+		</div>
+	</div>
+	
+	<!-- JavaScript Bundle with Popper -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
