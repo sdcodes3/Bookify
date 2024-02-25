@@ -4,7 +4,7 @@ This Web Site enable the sharing of one's thoughts about a books. Using this one
 ## Requirements:
 1. Any latest Web Browsers.
 2. Apache server and MySQL Database for development.
-3. Basic understanding of Web development and PHP programming.
+3. Basic understanding of Web development and Java programming.
 
 ## Installation:
 1. Clone this repository to your local machine using:
